@@ -21,6 +21,9 @@ class MainViewModel : ViewModel() {
     private val _selectedFilm = MutableStateFlow<FilmLight?>(null)
     val selectedFilm: StateFlow<FilmLight?> = _selectedFilm
     private val _movies = MutableStateFlow<List<TmdbFilms>>(listOf())
+    private val _selectedSerie = MutableStateFlow<SerieLight?>(null)
+    val selectedSerie: StateFlow<SerieLight?> = _selectedSerie
+
 
     val retrofit = Retrofit.Builder()
         .baseUrl("https://api.themoviedb.org/3/")
@@ -74,10 +77,25 @@ class MainViewModel : ViewModel() {
     fun getFilmById(filmId: String) {
         viewModelScope.launch {
             try {
-                _selectedFilm.value = api.getFilmDetails(filmId, api_key)
-
+                _selectedFilm.value = api.getFilmDetails(
+                    filmId,
+                    api_key,
+                    appendToResponse = "credits")
             } catch (e: Exception) {
                 _selectedFilm.value = null
+            }
+        }
+    }
+
+    fun getSerieById(seriesId: String) {
+        viewModelScope.launch {
+            try {
+                _selectedSerie.value = api.getSeriesDetails(
+                    seriesId,
+                    api_key,
+                    appendToResponse = "credits")
+            } catch (e: Exception) {
+                _selectedSerie.value = null
             }
         }
     }

@@ -41,8 +41,17 @@ interface Api {
     @GET("movie/{movie_id}")
     suspend fun getFilmDetails(
         @Path("movie_id") movieId: String,
-        @Query("api_key") apiKey: String
+        @Query("api_key") apiKey: String,
+        @Query("append_to_response") appendToResponse: String = "credits"
+
     ): FilmLight
+
+    @GET("tv/{tv_id}")
+    suspend fun getSeriesDetails(
+        @Path("tv_id") seriesId: String,
+        @Query("api_key") apiKey: String,
+        @Query("append_to_response") appendToResponse: String = "credits"
+    ): SerieLight
 }
 
 

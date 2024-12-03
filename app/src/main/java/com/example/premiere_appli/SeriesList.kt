@@ -1,6 +1,7 @@
 package com.example.premiere_appli
 
 import SerieLight
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -16,21 +17,18 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 
 @Composable
-fun SeriesListScreen(viewModel: MainViewModel) {
-    // Collecte de la liste des séries
+fun SeriesListScreen(viewModel: MainViewModel, navController: NavController) {
     val series by viewModel.series.collectAsState()
 
-
-    // Appel de la méthode pour récupérer les séries si la liste est vide
     LaunchedEffect(series) {
         if (series.isEmpty()) {
             viewModel.getSeriesInitiaux()
         }
     }
 
-    // Affichage de la grille des séries
     if (series.isNotEmpty()) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 128.dp),
@@ -38,24 +36,25 @@ fun SeriesListScreen(viewModel: MainViewModel) {
             contentPadding = PaddingValues(16.dp)
         ) {
             items(series) { serie ->
-                SerieItem(serie)
+                SerieItem(serie = serie, onClick = {
+                    navController.navigate("seriesDetail/${serie.id}")
+                })
             }
         }
     } else {
-        // Affichage d'un message de chargement si la liste est vide
         Text("Chargement des séries...", Modifier.padding(16.dp))
     }
 }
 
+
 @Composable
-fun SerieItem(serie: SerieLight) {
+fun SerieItem(serie: SerieLight, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Utilisation de Coil pour charger l'image de l'affiche
         val imageUrl = serie.poster_path?.let { "https://image.tmdb.org/t/p/w500$it" } ?: ""
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -66,16 +65,16 @@ fun SerieItem(serie: SerieLight) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
+                .clickable { onClick() } // Navigation au clic
         )
-        // Affichage du titre de la série
         Text(
             text = serie.name ?: "Titre inconnu",
             modifier = Modifier.padding(top = 8.dp)
         )
-        // Affichage de la date de sortie
         Text(
             text = serie.first_air_date ?: "Date inconnue",
             modifier = Modifier.padding(top = 4.dp)
         )
     }
 }
+

@@ -1,7 +1,7 @@
 package com.example.premiere_appli
 
 
-
+import SerieDetailScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +20,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -78,12 +81,15 @@ fun SearchTopBar(viewModel: MainViewModel, currentDestination: String?) {
                         FilmsListDest::class.java.simpleName -> {
                             viewModel.searchMovies(searchQuery.text)
                         }
+
                         SeriesListDest::class.java.simpleName -> {
                             viewModel.searchSeries(searchQuery.text)
                         }
+
                         ActeursListDest::class.java.simpleName -> {
                             viewModel.searchActeurs(searchQuery.text)
                         }
+
                         else -> {
                             // Pas de recherche ou gestion par défaut
                         }
@@ -124,25 +130,42 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         when (currentDestination?.route) {
                             "filmDetail/{filmId}" -> {
-                                // Affichage de la TopAppBar avec un chevron de retour pour l'écran de détails du film
                                 TopAppBar(
                                     title = { Text("Détail du film") },
                                     navigationIcon = {
                                         IconButton(onClick = { navController.popBackStack() }) {
                                             Icon(
-                                                painter = painterResource(id = R.drawable.back), // Assurez-vous que l'icône existe
+                                                painter = painterResource(id = R.drawable.back),
                                                 contentDescription = "Retour"
                                             )
                                         }
                                     }
                                 )
                             }
-                            ProfilDest::class.java.simpleName -> {
-                                // Ne pas afficher de TopAppBar sur la page de profil
+                            "seriesDetail/{seriesId}" -> {
+                                TopAppBar(
+                                    title = { Text("Détail de la série") },
+                                    navigationIcon = {
+                                        IconButton(onClick = { navController.popBackStack() }) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.back),
+                                                contentDescription = "Retour"
+                                            )
+                                        }
+                                    }
+                                )
                             }
+
+                            ProfilDest::class.java.simpleName -> {
+
+                            }
+
                             else -> {
                                 // Affichage de la barre de recherche pour toutes les autres pages
-                                SearchTopBar(viewModel = viewModel, currentDestination = currentDestination?.route)
+                                SearchTopBar(
+                                    viewModel = viewModel,
+                                    currentDestination = currentDestination?.route
+                                )
                             }
                         }
                     },
@@ -193,13 +216,17 @@ class MainActivity : ComponentActivity() {
                         Modifier.padding(innerPadding)
                     ) {
                         composable(ProfilDest::class.java.simpleName) {
-                            ProfilScreen(classes = windowSizeClass, innerPadding = innerPadding, navController)
+                            ProfilScreen(
+                                classes = windowSizeClass,
+                                innerPadding = innerPadding,
+                                navController
+                            )
                         }
                         composable(FilmsListDest::class.java.simpleName) {
                             FilmsListScreen(viewModel = viewModel, navController = navController)
                         }
                         composable(SeriesListDest::class.java.simpleName) {
-                            SeriesListScreen(viewModel = viewModel)
+                            SeriesListScreen(viewModel = viewModel, navController = navController)
                         }
                         composable(ActeursListDest::class.java.simpleName) {
                             ActeursListScreen(viewModel = viewModel)
@@ -207,6 +234,11 @@ class MainActivity : ComponentActivity() {
                         composable("filmDetail/{filmId}") { backStackEntry ->
                             val filmId = backStackEntry.arguments?.getString("filmId") ?: ""
                             FilmDetailScreen(viewModel = viewModel, filmId = filmId)
+                        }
+                        composable("seriesDetail/{seriesId}") { backStackEntry ->
+                            val seriesId = backStackEntry.arguments?.getString("seriesId") ?: ""
+                            SerieDetailScreen(viewModel = viewModel, seriesId = seriesId)
+
                         }
                     }
                 }
