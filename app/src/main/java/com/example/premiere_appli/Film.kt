@@ -33,9 +33,11 @@ fun FilmDetailScreen(viewModel: MainViewModel, filmId: String) {
 
     if (film != null) {
         if (isLandscape) {
+            // Ajout du défilement vertical pour le mode paysage
             Row(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState()) // Permet le défilement vertical en paysage
                     .padding(16.dp)
             ) {
                 val imageUrl = film!!.poster_path?.let { "https://image.tmdb.org/t/p/w500$it" } ?: ""
@@ -97,6 +99,7 @@ fun FilmDetailScreen(viewModel: MainViewModel, filmId: String) {
                 }
             }
         } else {
+            // Mode portrait avec défilement vertical
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -191,5 +194,6 @@ fun ActorCard(actor: CastMember) {
         )
     }
 }
+
 
 
