@@ -1,6 +1,7 @@
 package com.example.premiere_appli
 
 
+import PlaylistScreen
 import SerieDetailScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -50,6 +51,9 @@ class SeriesListDest
 
 @Serializable
 class ActeursListDest
+
+@Serializable
+class PlaylistDest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -176,6 +180,17 @@ class MainActivity : ComponentActivity() {
                                 NavigationBarItem(
                                     icon = {
                                         Icon(
+                                            painter = painterResource(id = R.drawable.baseline_person_24),
+                                            contentDescription = "playlist"
+                                        )
+                                    },
+                                    label = { Text("Playlist") },
+                                    selected = currentDestination?.route == PlaylistDest::class.java.simpleName,
+                                    onClick = { navController.navigate(PlaylistDest::class.java.simpleName) }
+                                )
+                                NavigationBarItem(
+                                    icon = {
+                                        Icon(
                                             painter = painterResource(id = R.drawable.films),
                                             contentDescription = "movies"
                                         )
@@ -206,6 +221,7 @@ class MainActivity : ComponentActivity() {
                                     selected = currentDestination?.route == ActeursListDest::class.java.simpleName,
                                     onClick = { navController.navigate(ActeursListDest::class.java.simpleName) }
                                 )
+
                             }
                         }
                     }
@@ -239,6 +255,9 @@ class MainActivity : ComponentActivity() {
                             val seriesId = backStackEntry.arguments?.getString("seriesId") ?: ""
                             SerieDetailScreen(viewModel = viewModel, seriesId = seriesId)
 
+                        }
+                        composable(PlaylistDest::class.java.simpleName) {
+                            PlaylistScreen(viewModel = viewModel)
                         }
                     }
                 }

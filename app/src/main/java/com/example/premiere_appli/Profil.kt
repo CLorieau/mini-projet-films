@@ -153,7 +153,7 @@ fun ContactInfo(email: String, linkedin: String) {
 @Composable
 fun StartButton(navController: NavHostController) {
     Button(
-        onClick = { navController.navigate(FilmsListDest::class.java.simpleName) },
+        onClick = { navController.navigate(PlaylistDest::class.java.simpleName) },
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE))
     ) {
         Text(text = "Démarrer", color = Color.White)
