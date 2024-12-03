@@ -95,7 +95,7 @@ data class ActeurLight(
     val profile_path: String? = ""
 )
 
-gitdata class Playlist(
+data class Playlist(
     val checksum: String? = "",
     val collaborative: Boolean? = false,
     val cover: String? = "",
