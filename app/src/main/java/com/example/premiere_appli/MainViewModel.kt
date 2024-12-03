@@ -3,10 +3,13 @@ package com.example.premiere_appli
 import ActeurLight
 import Api
 import FilmLight
+import Playlist
 import SerieLight
 import TmdbFilms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myapplicationtest.playlistjson
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,6 +20,7 @@ class MainViewModel : ViewModel() {
     val movies = MutableStateFlow<List<FilmLight>>(listOf())
     val series = MutableStateFlow<List<SerieLight>>(listOf())
     val acteurs = MutableStateFlow<List<ActeurLight>>(listOf())
+    val playlist = MutableStateFlow<List<Playlist>>(listOf())
     val api_key = "b229e69561a342c12d5048557ba6e35f"
     private val _selectedFilm = MutableStateFlow<FilmLight?>(null)
     val selectedFilm: StateFlow<FilmLight?> = _selectedFilm
@@ -97,6 +101,18 @@ class MainViewModel : ViewModel() {
             } catch (e: Exception) {
                 _selectedSerie.value = null
             }
+        }
+    }
+
+    fun fetchPlaylist() : Playlist {
+        val moshi = Moshi.Builder().build()
+        return moshi.adapter(Playlist::class.java).fromJson(playlistjson)!!
+    }
+
+    fun getPlaylist () {
+        viewModelScope.launch {
+            playlist.value = getPlaylist()
+
         }
     }
 }

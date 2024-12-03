@@ -27,6 +27,7 @@ fun main (items: List<Cuisine>, elements: List<Salon>) {
     etudiants.filter {it.promo == "2024"}.forEach{ println(it.name)}
     etudiants.filter { it.matieres.size > 2 }.forEach { println(it.name) }
 
+
 }
 
 
